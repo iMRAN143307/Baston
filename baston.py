@@ -1,6 +1,9 @@
 import pygame
 
-running = True
+def create_move():
+    pass
 
-while running:
-    running = False
+def create_character():
+    pass
+
+#Have to add as many means of input handling as possible
