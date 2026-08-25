@@ -2,11 +2,11 @@ import pygame
 
 hitboxes_active = []
 
-# add tuples with ((x, y), activity_frames_left, player, move)
+# add lists with [(x, y), activity_frames_left, player, move]
 
 hurtboxes_active = []
 
-#add tuples with ((x, y), player)
+#add lists with [(x, y), player]
 
 def rectangle(x, y, w, h):
     """Takes the top-left corner as (x, y)"""
@@ -25,15 +25,6 @@ def circle(x, y, size):
                 all_points.append((x + i, y + j))
     return all_points
 
-def arch(x, y, w, left, right):
-    pass
-
-def horizontal_pill(x, y, size):
-    pass
-
-def vertical_pill(x, y, size):
-    pass
-
 def triangle(x, y, size):
     """Takes the centre as (x, y)"""
     all_points = []
@@ -43,14 +34,31 @@ def triangle(x, y, size):
                 all_points.append((x + i, y + j))
     return all_points
 
+def arch(x, y, w, left, right):
+    pass
+
+def horizontal_pill(x, y, size):
+    pass
+
+def vertical_pill(x, y, size):
+    pass
+
 def create_projectile():
     pass
     # create a projectile with certain properties
 
-def create_move():
-    pass
-    # list of shapes with position relative to the hurtbox, frames active and other info in sequence or a create_projectile() function call
-    # info includes: knockback, knockback angle, hitstun, hitstop?, damage
+def use_move(hitboxes: list):
+    for hitbox in hitboxes:
+        if hitbox[0] != "projectile":
+            for point in hitbox[0]:
+                hitboxes_active.append([(point[0], point[1]), hitbox[1], hitbox[2], hitbox[3]])
+                # [(x, y), frames_active, player, move]
+        elif hitbox[0] == "projectile":
+            pass
+            #create a projectile
+
+    # info includes: knockback, knockback angle, hitstun, hitstop?, damage, i-frames?
+    # projectile info includes: knockback, knockback angle, hitstun, hitstop?, damage, i-frames?, velocity, direction
 
 def create_character():
     pass
