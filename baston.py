@@ -43,22 +43,24 @@ def horizontal_pill(x, y, size):
 def vertical_pill(x, y, size):
     pass
 
-def create_projectile():
+def create_projectile(hitboxes, velocity, direction):
     pass
     # create a projectile with certain properties
+    # combine velocity and direction into one 2D vector
+    # append "projectile" to the end of the added hitbox
 
 def use_move(hitboxes: list):
     for hitbox in hitboxes:
         if hitbox[0] != "projectile":
             for point in hitbox[0]:
                 hitboxes_active.append([(point[0], point[1]), hitbox[1], hitbox[2], hitbox[3]])
-                # [(x, y), frames_active, player, move]
+                #hitbox = [[(x1, y1), (x2, y2)], frames_active, player, move]
         elif hitbox[0] == "projectile":
-            pass
-            #create a projectile
+            create_projectile(hitbox[1], hitbox[2], hitbox[3])
 
-    # info includes: knockback, knockback angle, hitstun, hitstop?, damage, i-frames?
-    # projectile info includes: knockback, knockback angle, hitstun, hitstop?, damage, i-frames?, velocity, direction
+    # moves look like: [[hitbox1, hitbox2], knockback, knockback angle, hitstun, hitstop?, damage, i-frames?, priority?]
+    # hybrid moves look like: [[hitbox1, ["projectile", hitbox2, velocity, direction]], knockback, knockback angle, hitstun, hitstop?, damage, i-frames?, priority?]
+    # projectile moves look like: [[["projectile", hitbox1, velocity, direction], ["projectile", hitbox2, velocity, direction]], knockback, knockback angle, hitstun, hitstop?, damage, i-frames?, priority?]
 
 def create_character():
     pass
@@ -70,12 +72,15 @@ def hitbox_on_hitbox_collision():
 def hitbox_on_opposing_hurtbox_collision():
     pass
 
+    #refer back to the move for all the information
+
 def collision_check():
     pass
 
     # check all hitboxes and hurtboxes for collision
     # lower all activity_frames_left by 1
     # if activity_frames_left == 0, delete the hitbox
+    # otherwise, if the last element in the hitbox list is "projectile", change the hitbox's (x, y) by it's direction/velocity vector
 
 def zone_set():
     pass
