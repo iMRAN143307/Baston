@@ -1,5 +1,16 @@
 import pygame
 
+UP = pygame.USEREVENT + 1
+DOWN = pygame.USEREVENT + 2
+LEFT = pygame.USEREVENT + 3
+RIGHT = pygame.USEREVENT + 4
+BUTTON1 = pygame.USEREVENT + 5
+BUTTON2 = pygame.USEREVENT + 6
+BUTTON3 = pygame.USEREVENT + 7
+BUTTON4 = pygame.USEREVENT + 8
+SHOULDER1 = pygame.USEREVENT + 9
+SHOULDER2 = pygame.USEREVENT + 10
+
 hitboxes_active = []
 
 # add lists with [(x, y), activity_frames_left, player, move]
@@ -43,28 +54,36 @@ def horizontal_pill(x, y, size):
 def vertical_pill(x, y, size):
     pass
 
-def create_projectile(hitboxes, velocity, direction):
-    pass
+def create_projectile(hitbox, velocity, direction):
+    """DO NOT CALL YOUR MOVE 'PROJECTILE'! IT IS BAD CODE DESIGN AND MAY LEAD TO ISSUES WITH BASTON'S HITBOX HANDLER"""
+    for point in hitbox[0]:
+        hitboxes_active.append([(point[0], point[1]), hitbox[1], hitbox[2], hitbox[3], (direction[0] * velocity, direction[1] * velocity), "projectile"])
     # create a projectile with certain properties
     # combine velocity and direction into one 2D vector
     # append "projectile" to the end of the added hitbox
 
 def use_move(hitboxes: list):
+    """
+
+    hitboxes look like: [shape(), frames_active, player, move]
+
+    moves look like: [[hitbox1, hitbox2], knockback, knockback angle, hitstun, hitstop?, damage, i-frames?, priority?]
+
+    hybrid moves look like: [[hitbox1, ["projectile", hitbox2, velocity, direction]], knockback, knockback angle, hitstun, hitstop?, damage, i-frames?, priority?]
+
+    projectile moves look like: [[["projectile", hitbox1, velocity, direction], ["projectile", hitbox2, velocity, direction]], knockback, knockback angle, hitstun, hitstop?, damage, i-frames?, priority?]
+
+    """
     for hitbox in hitboxes:
         if hitbox[0] != "projectile":
             for point in hitbox[0]:
                 hitboxes_active.append([(point[0], point[1]), hitbox[1], hitbox[2], hitbox[3]])
-                #hitbox = [[(x1, y1), (x2, y2)], frames_active, player, move]
         elif hitbox[0] == "projectile":
             create_projectile(hitbox[1], hitbox[2], hitbox[3])
 
-    # moves look like: [[hitbox1, hitbox2], knockback, knockback angle, hitstun, hitstop?, damage, i-frames?, priority?]
-    # hybrid moves look like: [[hitbox1, ["projectile", hitbox2, velocity, direction]], knockback, knockback angle, hitstun, hitstop?, damage, i-frames?, priority?]
-    # projectile moves look like: [[["projectile", hitbox1, velocity, direction], ["projectile", hitbox2, velocity, direction]], knockback, knockback angle, hitstun, hitstop?, damage, i-frames?, priority?]
-
 def create_character():
     pass
-    # create hurtbox(es) and add moves
+    # create hurtbox(es) and add moves bound to inputs
 
 def hitbox_on_hitbox_collision():
     pass
@@ -80,7 +99,7 @@ def collision_check():
     # check all hitboxes and hurtboxes for collision
     # lower all activity_frames_left by 1
     # if activity_frames_left == 0, delete the hitbox
-    # otherwise, if the last element in the hitbox list is "projectile", change the hitbox's (x, y) by it's direction/velocity vector
+    # otherwise, if the last element in the hitbox list is "projectile", change the hitbox's (x, y) by its direction/velocity vector
 
 def zone_set():
     pass
