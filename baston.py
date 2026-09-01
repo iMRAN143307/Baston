@@ -1,15 +1,5 @@
 import pygame
-
-UP = pygame.USEREVENT + 1
-DOWN = pygame.USEREVENT + 2
-LEFT = pygame.USEREVENT + 3
-RIGHT = pygame.USEREVENT + 4
-BUTTON1 = pygame.USEREVENT + 5
-BUTTON2 = pygame.USEREVENT + 6
-BUTTON3 = pygame.USEREVENT + 7
-BUTTON4 = pygame.USEREVENT + 8
-SHOULDER1 = pygame.USEREVENT + 9
-SHOULDER2 = pygame.USEREVENT + 10
+from collections import defaultdict
 
 hitboxes_active = []
 
@@ -17,7 +7,11 @@ hitboxes_active = []
 
 hurtboxes_active = []
 
-#add lists with [(x, y), player]
+# add lists with [(x, y), player]
+
+zones_active = []
+
+# add lists with [(x, y), type]
 
 def rectangle(x, y, w, h):
     """Takes the top-left corner as (x, y)"""
@@ -81,12 +75,29 @@ def use_move(hitboxes: list):
         elif hitbox[0] == "projectile":
             create_projectile(hitbox[1], hitbox[2], hitbox[3])
 
-def create_character():
-    pass
+def create_character(hurtboxes: list):
+    """
+
+    hurtboxes look like: ["move_name", (x_offset, y_offset), shape()]
+
+    """
+
+    char_hitboxes = defaultdict(list)
+
+    for hurtbox in hurtboxes:
+        for point in hurtbox[2]:
+            char_hitboxes[hurtbox[0]].append((point[0] + hurtbox[1][0], point[1] + hurtbox[1][1]))
+
+    return char_hitboxes
+
     # create hurtbox(es) and add moves bound to inputs
+    # hurtboxes are reusable by name
+    # hurtbox x_offset and y_offset are from the top-left corner
 
 def hitbox_on_hitbox_collision():
     pass
+
+    #refer back to the move for all the information
 
 def hitbox_on_opposing_hurtbox_collision():
     pass
@@ -101,10 +112,13 @@ def collision_check():
     # if activity_frames_left == 0, delete the hitbox
     # otherwise, if the last element in the hitbox list is "projectile", change the hitbox's (x, y) by its direction/velocity vector
 
-def zone_set():
-    pass
+def zone_set(shape: list, type: str):
+    """
+    zone types are: ["death", "special death", "bubble damage", "hard platform", "soft platform", "ledge"]
+    """
 
-    #set a special zone such as: blast zone bubble, death zone, special death zone, king of the hill zone, solid object zone
+    for point in shape:
+        zones_active.append([point, type])
 
 def zone_collision_check():
     pass
