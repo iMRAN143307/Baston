@@ -22,16 +22,22 @@ def rectangle(x, y, w, h):
     return all_points
 
 def circle(x, y, size):
-    """Takes the centre as (x, y)"""
+    """Takes the ??? as (x, y)"""
     all_points = []
-    for i in range(size):
-        for j in range(size):
+    x_list = [-1 * i for i in range(size)]
+    x_list.append(0)
+    x_list.extend(range(size))
+    y_list = [-1 * i for i in range(size)]
+    y_list.append(0)
+    y_list.extend(range(size))
+    for i in x_list:
+        for j in y_list:
             if (i**2 + j**2 <= size**2):
                 all_points.append((x + i, y + j))
     return all_points
 
 def triangle(x, y, size):
-    """Takes the centre as (x, y)"""
+    """Takes the ??? as (x, y)"""
     all_points = []
     for i in range(size):
         for j in range(size):
@@ -40,7 +46,13 @@ def triangle(x, y, size):
     return all_points
 
 def arch(x, y, w, left, right):
-    pass
+    """Takes the ??? as (x, y)"""
+    all_points = []
+    for i in range(right - left):
+        for j in range(right - left):
+            if (j < (-i*i*w)) and (i >= left) and (i <= right):
+                all_points.append((x + i, y + j))
+    return all_points
 
 def horizontal_pill(x, y, size):
     pass
