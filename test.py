@@ -23,7 +23,7 @@ while running:
         pygame.draw.rect(screen, "blue", pixel)
 
     zones_active = []
-    zones_active.extend(triangle(100, 100, 50))
+    zones_active.extend(triangle(100, 100, 100, "down"))
     for box in zones_active:
         pixel = pygame.Rect(box[0], box[1], 1, 1)
         pygame.draw.rect(screen, "green", pixel)

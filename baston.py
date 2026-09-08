@@ -22,7 +22,7 @@ def rectangle(x, y, w, h):
     return all_points
 
 def circle(x, y, size):
-    """Takes the ??? as (x, y)"""
+    """Takes the centre as (x, y)"""
     all_points = []
     x_list = [-1 * i for i in range(size)]
     x_list.append(0)
@@ -36,23 +36,29 @@ def circle(x, y, size):
                 all_points.append((x + i, y + j))
     return all_points
 
-def triangle(x, y, size):
-    """Takes the ??? as (x, y)"""
+def triangle(x, y, size, direction):
+    """Takes the right-angle corner as (x, y) and the direction extends outward from there"""
     all_points = []
-    for i in range(size):
-        for j in range(size):
-            if (j <= (i + size) * 1.73205081) and (j <= (i - size) * -1.73205081):
-                all_points.append((x + i, y + j))
+    x_list = [-1 * i for i in range(size)]
+    x_list.append(0)
+    x_list.extend(range(size))
+    y_list = [-1 * i for i in range(size)]
+    y_list.append(0)
+    y_list.extend(range(size))
+    if direction == "down":
+        for i in x_list:
+            for j in y_list:
+                if (j>i) and (j>-i):
+                    all_points.append((x + i, y + j))
+    elif direction == "up":
+        for i in x_list:
+            for j in y_list:
+                if (j<i) and (j<-i):
+                    all_points.append((x + i, y + j))
     return all_points
 
 def arch(x, y, w, left, right):
-    """Takes the ??? as (x, y)"""
-    all_points = []
-    for i in range(right - left):
-        for j in range(right - left):
-            if (j < (-i*i*w)) and (i >= left) and (i <= right):
-                all_points.append((x + i, y + j))
-    return all_points
+    pass
 
 def horizontal_pill(x, y, size):
     pass
