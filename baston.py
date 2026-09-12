@@ -9,7 +9,7 @@ hitboxes_active = []
 
 hurtboxes_active = []
 
-# add lists with [(x, y), player]
+# add lists with [(x, y), activity_frames_left, player]
 
 zones_active = []
 
@@ -68,8 +68,12 @@ def horizontal_pill(x, y, size):
 def vertical_pill(x, y, size):
     pass
 
-def apply_hurtboxes(points: list):
-    pass
+def apply_hurtboxes(points: list, offset: tuple[int, int], player, time: int = 1):
+    """Pass in a character hurtbox action, the offset from the top left, the player that it belongs to and how many frames the hurtbox should be active for"""
+    hurtboxes = []
+    for point in points:
+        hurtboxes.append([(point[0] + offset[0], point[1] + offset[1]), time, player])
+    return hurtboxes
 
     # add all current hurtboxes here
 
@@ -86,11 +90,11 @@ def use_move(hitboxes: list):
 
     hitboxes look like: [shape(), frames_active, player, move]
 
-    moves look like: [[hitbox1, hitbox2], knockback, knockback angle, hitstun, damage, priority, i-frames?, hitstop?]
+    moves look like: [[hitbox1, hitbox2], knockback, knockback angle, hitstun, damage, priority, hitstop?]
 
-    hybrid moves look like: [[hitbox1, ["projectile", hitbox2, velocity, direction]], knockback, knockback angle, hitstun, damage, priority, i-frames?, hitstop?]
+    hybrid moves look like: [[hitbox1, ["projectile", hitbox2, velocity, direction]], knockback, knockback angle, hitstun, damage, priority, hitstop?]
 
-    projectile moves look like: [[["projectile", hitbox1, velocity, direction], ["projectile", hitbox2, velocity, direction]], knockback, knockback angle, hitstun, damage, priority, i-frames?, hitstop?]
+    projectile moves look like: [[["projectile", hitbox1, velocity, direction], ["projectile", hitbox2, velocity, direction]], knockback, knockback angle, hitstun, damage, priority, hitstop?]
 
     """
     for hitbox in hitboxes:
@@ -103,19 +107,21 @@ def use_move(hitboxes: list):
 def create_character(hurtboxes: list):
     """
 
-    hurtboxes look like: ["action", (x_offset, y_offset), shape()]
+    hurtboxes look like: ["action", shape()]
 
-    characters look like: [hurtboxes, damage, lives]
+    characters look like: [hurtboxes, damage, (actionability, duration), lives]
+
+    actionability is "grounded", "aerial", "helpless" or "stunned" and a duration or -1 for indefinite
 
     """
 
     char_hurtboxes = defaultdict(list)
 
     for hurtbox in hurtboxes:
-        for point in hurtbox[2]:
-            char_hurtboxes[hurtbox[0]].append((point[0] + hurtbox[1][0], point[1] + hurtbox[1][1]))
+        for point in hurtbox[1]:
+            char_hurtboxes[hurtbox[0]].append((point[0], point[1]))
 
-    return [char_hurtboxes, 0, starting_lives]
+    return [char_hurtboxes, 0, ("grounded", -1), starting_lives]
 
     # create hurtbox(es) and add moves bound to inputs
     # hurtboxes are reusable by name
@@ -164,7 +170,7 @@ def collision_check():
 
     # check all hitboxes and hurtboxes for collision
     # lower all activity_frames_left by 1
-    # if activity_frames_left == 0, delete the hitbox
+    # if activity_frames_left == 0, delete the hitbox or hurtbox
     # otherwise, if the last element in the hitbox list is "projectile", change the hitbox's (x, y) by its direction/velocity vector
 
 def zone_set(shape: list, type: str):
