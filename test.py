@@ -3,6 +3,7 @@ import pygame
 import os
 import sys
 import random
+import copy
 
 SONG_END = pygame.USEREVENT + 1
 
@@ -11,7 +12,14 @@ screen = pygame.display.set_mode((1280, 720))
 running = True
 
 starting_lives = 3
-dragon_king_printed = 0
+p1coords = [360, 350]
+p2coords = [820, 350]
+p1accel = [0, 0]
+p2accel = [0, 0]
+stage = rectangle(256, 470, 768, 4, "set")
+
+dragon_king1 = create_character([["idle", circle(65, 40, 23)], ["idle", rectangle(45, 30, 40, 80)], ["idle", triangle(65, 85, 35, "down")]])
+dragon_king2 = copy.deepcopy(dragon_king1)
 
 def resource_path(relative_path):
     try:
@@ -22,22 +30,20 @@ def resource_path(relative_path):
 
 def load_and_scale(filename, size=None, transparency=None):
     if transparency is not None:
-        unscaled = pygame.image.load(resource_path(f"{filename}.png")).convert()
-    else:
         unscaled = pygame.image.load(resource_path(f"{filename}.png")).convert_alpha()
+    else:
+        unscaled = pygame.image.load(resource_path(f"{filename}.png")).convert()
     if size is not None:
         return pygame.transform.scale(unscaled, size)
     else:
         return unscaled
 
-dragon_king_left = load_and_scale("dragon-king", None, True)
+dragon_king_left = load_and_scale("dragon-king", (128, 128), True)
 dragon_king_right = pygame.transform.flip(dragon_king_left, True, False)
 bg = load_and_scale("bg", (1280, 720))
 fist_right = load_and_scale("fist", None, True)
 fist_left = pygame.transform.flip(fist_right, True, False)
 ball = load_and_scale("ball", None, True)
-
-
 
 song0 = "default1.wav"
 song1 = "default2.wav"
@@ -57,32 +63,67 @@ while running:
             pygame.mixer.music.play()
 
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_w]:
-        pass
+    if keys[pygame.K_w] and dragon_king1[2][0] == "aerial":
+        p1accel[1] -= 50
+        dragon_king1[2] = ("helpless", 0)
+    elif keys[pygame.K_w] and dragon_king1[2][0] == "grounded":
+        p1accel[1] -= 50
+        dragon_king1[2] = ("aerial", 0)
+        jump_buffer = 60
     if keys[pygame.K_a]:
-        pass
+        p1accel[0] -= 20
     if keys[pygame.K_s]:
         pass
     if keys[pygame.K_d]:
-        pass
+        p1accel[0] += 20
     if keys[pygame.K_q]:
         pass
     if keys[pygame.K_e]:
         pass
-    if keys[pygame.K_i]:
-        pass
+    if keys[pygame.K_i] and dragon_king2[2][0] == "aerial":
+        p2accel[1] -= 50
+        dragon_king2[2] = ("helpless", 0)
+    elif keys[pygame.K_i] and dragon_king2[2][0] == "grounded":
+        p2accel[1] -= 50
+        dragon_king2[2] = ("aerial", 0)
     if keys[pygame.K_j]:
-        pass
+        p2accel[0] -= 20
     if keys[pygame.K_k]:
         pass
     if keys[pygame.K_l]:
-        pass
+        p2accel[0] += 20
     if keys[pygame.K_u]:
         pass
     if keys[pygame.K_o]:
         pass
 
-    screen.blit(bg, (0, 0))
+    p1coords = [p1coords[0] + p1accel[0], p1coords[1] + p1accel[1]]
+    if p1accel[0] > 0:
+        p1accel[0] -= 10
+    elif p1accel[0] < 0:
+        p1accel[0] += 10
+    if p1accel[1] > 0:
+        p1accel[1] -= 2
+    elif p1accel[1] < 0:
+        p1accel[1] += 2
+    p1accel[0] = min(p1accel[0], 60)
+    p1accel[0] = max(p1accel[0], -60)
+
+    p2coords = [p2coords[0] + p2accel[0], p2coords[1] + p2accel[1]]
+    if p2accel[0] > 0:
+        p2accel[0] -= 10
+    elif p2accel[0] < 0:
+        p2accel[0] += 10
+    if p2accel[1] > 0:
+        p2accel[1] -= 2
+    elif p2accel[1] < 0:
+        p2accel[1] += 2
+    p2accel[0] = min(p2accel[0], 60)
+    p2accel[0] = max(p2accel[0], -60)
+
+    p1accel[1] += 6
+    p2accel[1] += 6
+
     hitboxes_active = []
     hitboxes_active.extend(circle(100, 100, 100))
     for box in hitboxes_active:
@@ -90,12 +131,33 @@ while running:
         pygame.draw.rect(screen, "red", pixel)
 
     hurtboxes_active = []
-    dragon_king = create_character([["idle", circle(50, 0, 30)], ["idle", rectangle(50, 30, 10, 50)], ["move1", circle(50, 0, 30)], ["move1", rectangle(70, 15, 50, 10)]])
-    hurtboxes_active.extend(apply_hurtboxes(dragon_king[0]["move1"], (640, 360), 1))
+    hurtboxes_active.extend(apply_hurtboxes(dragon_king1[0]["idle"], p1coords, 1))
+    hurtboxes_active.extend(apply_hurtboxes(dragon_king2[0]["idle"], p2coords, 2))
+
+    for point in hurtboxes_active:
+        if point[0] in stage:
+            if point[2] == 1:
+                if dragon_king1[2][1] == 0:
+                    dragon_king1[2] = ("grounded", -1)
+                p1coords[1] = 351
+                p1accel[1] = 0
+            elif point[2] == 2:
+                if dragon_king2[2][1] == 0:
+                    dragon_king2[2] = ("grounded", -1)
+                p2coords[1] = 351
+                p2accel[1] = 0
+
+    screen.blit(bg, (0, 0))
+    screen.blit(dragon_king_left, p1coords)
+    screen.blit(dragon_king_right, p2coords)
+
     for box in hurtboxes_active:
         pixel = pygame.Rect(box[0][0], box[0][1], 1, 1)
         pygame.draw.rect(screen, "blue", pixel)
 
+    for box in stage:
+        pixel = pygame.Rect(box[0], box[1], 1, 1)
+        pygame.draw.rect(screen, "green", pixel)
 
     pygame.display.flip()
 

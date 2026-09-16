@@ -15,12 +15,20 @@ zones_active = []
 
 # add lists with [(x, y), type]
 
-def rectangle(x, y, w, h):
+def rectangle(x, y, w, h, structure="list"):
     """Takes the top-left corner as (x, y)"""
-    all_points = []
-    for i in range(w):
-        for j in range(h):
-            all_points.append((x + i, y + j))
+    if structure == "list":
+        all_points = []
+        for i in range(w):
+            for j in range(h):
+                all_points.append((x + i, y + j))
+    elif structure == "set":
+        all_points = set()
+        for i in range(w):
+            for j in range(h):
+                all_points.add((x + i, y + j))
+    else:
+        all_points = "You messed up somewhere"
     return all_points
 
 def circle(x, y, size):
@@ -68,7 +76,7 @@ def horizontal_pill(x, y, size):
 def vertical_pill(x, y, size):
     pass
 
-def apply_hurtboxes(points: list, offset: tuple[int, int], player, time: int = 1):
+def apply_hurtboxes(points: list, offset, player, time: int = 1):
     """Pass in a character hurtbox action, the offset from the top left, the player that it belongs to and how many frames the hurtbox should be active for"""
     hurtboxes = []
     for point in points:
