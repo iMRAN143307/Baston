@@ -17,6 +17,8 @@ p2coords = [820, 350]
 p1accel = [0, 0]
 p2accel = [0, 0]
 stage = rectangle(256, 470, 768, 4, "set")
+jump_buffer1 = 60
+jump_buffer2 = 60
 
 dragon_king1 = create_character([["idle", circle(65, 40, 23)], ["idle", rectangle(45, 30, 40, 80)], ["idle", triangle(65, 85, 35, "down")]])
 dragon_king2 = copy.deepcopy(dragon_king1)
@@ -63,35 +65,40 @@ while running:
             pygame.mixer.music.play()
 
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_w] and dragon_king1[2][0] == "aerial":
-        p1accel[1] -= 50
+    if keys[pygame.K_w] and dragon_king1[2][0] == "aerial" and jump_buffer1 < 0:
+        p1accel[1] = -60
         dragon_king1[2] = ("helpless", 0)
     elif keys[pygame.K_w] and dragon_king1[2][0] == "grounded":
-        p1accel[1] -= 50
+        p1accel[1] = -55
         dragon_king1[2] = ("aerial", 0)
-        jump_buffer = 60
+        jump_buffer1 = 7
+    elif dragon_king1[2][0] == "aerial":
+        jump_buffer1 -= 1
     if keys[pygame.K_a]:
-        p1accel[0] -= 20
+        p1accel[0] -= 15
     if keys[pygame.K_s]:
         pass
     if keys[pygame.K_d]:
-        p1accel[0] += 20
+        p1accel[0] += 15
     if keys[pygame.K_q]:
         pass
     if keys[pygame.K_e]:
         pass
-    if keys[pygame.K_i] and dragon_king2[2][0] == "aerial":
-        p2accel[1] -= 50
+    if keys[pygame.K_i] and dragon_king2[2][0] == "aerial" and jump_buffer2 < 0:
+        p2accel[1] = -60
         dragon_king2[2] = ("helpless", 0)
     elif keys[pygame.K_i] and dragon_king2[2][0] == "grounded":
-        p2accel[1] -= 50
+        p2accel[1] = -55
         dragon_king2[2] = ("aerial", 0)
+        jump_buffer2 = 7
+    elif dragon_king2[2][0] == "aerial":
+        jump_buffer2 -= 1
     if keys[pygame.K_j]:
-        p2accel[0] -= 20
+        p2accel[0] -= 15
     if keys[pygame.K_k]:
         pass
     if keys[pygame.K_l]:
-        p2accel[0] += 20
+        p2accel[0] += 15
     if keys[pygame.K_u]:
         pass
     if keys[pygame.K_o]:
@@ -99,27 +106,27 @@ while running:
 
     p1coords = [p1coords[0] + p1accel[0], p1coords[1] + p1accel[1]]
     if p1accel[0] > 0:
-        p1accel[0] -= 10
+        p1accel[0] -= max(abs(p1accel[0]//2), 1)
     elif p1accel[0] < 0:
-        p1accel[0] += 10
+        p1accel[0] += max(abs(p1accel[0]//2), 1)
     if p1accel[1] > 0:
         p1accel[1] -= 2
     elif p1accel[1] < 0:
         p1accel[1] += 2
-    p1accel[0] = min(p1accel[0], 60)
-    p1accel[0] = max(p1accel[0], -60)
+    p1accel[0] = min(p1accel[0], 40)
+    p1accel[0] = max(p1accel[0], -40)
 
     p2coords = [p2coords[0] + p2accel[0], p2coords[1] + p2accel[1]]
     if p2accel[0] > 0:
-        p2accel[0] -= 10
+        p2accel[0] -= max(abs(p2accel[0]//2), 1)
     elif p2accel[0] < 0:
-        p2accel[0] += 10
+        p2accel[0] += max(abs(p2accel[0]//2), 1)
     if p2accel[1] > 0:
         p2accel[1] -= 2
     elif p2accel[1] < 0:
         p2accel[1] += 2
-    p2accel[0] = min(p2accel[0], 60)
-    p2accel[0] = max(p2accel[0], -60)
+    p2accel[0] = min(p2accel[0], 40)
+    p2accel[0] = max(p2accel[0], -40)
 
     p1accel[1] += 6
     p2accel[1] += 6
@@ -137,15 +144,23 @@ while running:
     for point in hurtboxes_active:
         if point[0] in stage:
             if point[2] == 1:
-                if dragon_king1[2][1] == 0:
-                    dragon_king1[2] = ("grounded", -1)
-                p1coords[1] = 351
-                p1accel[1] = 0
+                if p1accel[1] >= 0:
+                    if dragon_king1[2][1] == 0:
+                        dragon_king1[2] = ("grounded", -1)
+                    p1coords[1] = 351
+                    p1accel[1] = 0
+                else:
+                    p1coords[1] = 479
+                    p1accel[1] = 0
             elif point[2] == 2:
-                if dragon_king2[2][1] == 0:
-                    dragon_king2[2] = ("grounded", -1)
-                p2coords[1] = 351
-                p2accel[1] = 0
+                if p2accel[1] >= 0:
+                    if dragon_king2[2][1] == 0:
+                        dragon_king2[2] = ("grounded", -1)
+                    p2coords[1] = 351
+                    p2accel[1] = 0
+                else:
+                    p2coords[1] = 479
+                    p2accel[1] = 0
 
     screen.blit(bg, (0, 0))
     screen.blit(dragon_king_left, p1coords)
