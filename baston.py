@@ -11,24 +11,12 @@ hurtboxes_active = []
 
 # add lists with [(x, y), activity_frames_left, player]
 
-zones_active = []
-
-# add lists with [(x, y), type]
-
-def rectangle(x, y, w, h, structure="list"):
+def rectangle(x, y, w, h):
     """Takes the top-left corner as (x, y)"""
-    if structure == "list":
-        all_points = []
-        for i in range(w):
-            for j in range(h):
-                all_points.append((x + i, y + j))
-    elif structure == "set":
-        all_points = set()
-        for i in range(w):
-            for j in range(h):
-                all_points.add((x + i, y + j))
-    else:
-        all_points = "You messed up somewhere"
+    all_points = []
+    for i in range(w):
+        for j in range(h):
+            all_points.append((x + i, y + j))
     return all_points
 
 def circle(x, y, size):
@@ -180,22 +168,5 @@ def collision_check():
     # lower all activity_frames_left by 1
     # if activity_frames_left == 0, delete the hitbox or hurtbox
     # otherwise, if the last element in the hitbox list is "projectile", change the hitbox's (x, y) by its direction/velocity vector
-
-def zone_set(shape: list, type: str):
-    """
-    zone types are: ["death", "special death", "bubble damage", "hard platform", "soft platform", "ledge"]
-    """
-
-    for point in shape:
-        zones_active.append([point, type])
-
-def zone_collision_check():
-    for hitbox in hitboxes_active:
-        for zone in zones_active:
-            if hitbox[0] == zone[0]:
-                pass
-                #trigger collision based on type
-
-    #check if any hurtboxes or hitboxes are in special zones
 
 # have to add as many means of input handling as possible

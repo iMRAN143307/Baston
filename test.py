@@ -16,12 +16,13 @@ p1coords = [360, 350]
 p2coords = [820, 350]
 p1accel = [0, 0]
 p2accel = [0, 0]
-stage = rectangle(256, 470, 768, 4, "set")
+stage = (256, 470, 1024, 570)
 jump_buffer1 = 60
 jump_buffer2 = 60
 
 dragon_king1 = create_character([["idle", circle(65, 40, 23)], ["idle", rectangle(45, 30, 40, 80)], ["idle", triangle(65, 85, 35, "down")]])
 dragon_king2 = copy.deepcopy(dragon_king1)
+punch = [[hitbox1, hitbox2], knockback, knockback angle, 10, 10, 2] #knockback angle will be smash bros
 
 def resource_path(relative_path):
     try:
@@ -142,7 +143,7 @@ while running:
     hurtboxes_active.extend(apply_hurtboxes(dragon_king2[0]["idle"], p2coords, 2))
 
     for point in hurtboxes_active:
-        if point[0] in stage:
+        if point[0][0] >= stage[0] and point[0][0] <= stage[2] and point[0][1] >= stage[1] and point[0][1] <= stage[3]:
             if point[2] == 1:
                 if p1accel[1] >= 0:
                     if dragon_king1[2][1] == 0:
@@ -169,10 +170,6 @@ while running:
     for box in hurtboxes_active:
         pixel = pygame.Rect(box[0][0], box[0][1], 1, 1)
         pygame.draw.rect(screen, "blue", pixel)
-
-    for box in stage:
-        pixel = pygame.Rect(box[0], box[1], 1, 1)
-        pygame.draw.rect(screen, "green", pixel)
 
     pygame.display.flip()
 
