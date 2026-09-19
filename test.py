@@ -22,7 +22,8 @@ jump_buffer2 = 60
 
 dragon_king1 = create_character([["idle", circle(65, 40, 23)], ["idle", rectangle(45, 30, 40, 80)], ["idle", triangle(65, 85, 35, "down")]])
 dragon_king2 = copy.deepcopy(dragon_king1)
-punch = [[hitbox1, hitbox2], knockback, knockback angle, 10, 10, 2] #knockback angle will be smash bros
+punchleft = [[[circle(0, 21, 10), 60]], 30, 80, 10, 10, 2] #knockback angle will be smash bros
+punchright = [[[circle(42, 21, 10), 60]], 30, 80, 10, 10, 2]
 
 def resource_path(relative_path):
     try:
@@ -82,7 +83,7 @@ while running:
     if keys[pygame.K_d]:
         p1accel[0] += 15
     if keys[pygame.K_q]:
-        pass
+        use_move(punchleft[0], 1, "punchleft")
     if keys[pygame.K_e]:
         pass
     if keys[pygame.K_i] and dragon_king2[2][0] == "aerial" and jump_buffer2 < 0:
@@ -133,10 +134,6 @@ while running:
     p2accel[1] += 6
 
     hitboxes_active = []
-    hitboxes_active.extend(circle(100, 100, 100))
-    for box in hitboxes_active:
-        pixel = pygame.Rect(box[0], box[1], 1, 1)
-        pygame.draw.rect(screen, "red", pixel)
 
     hurtboxes_active = []
     hurtboxes_active.extend(apply_hurtboxes(dragon_king1[0]["idle"], p1coords, 1))
@@ -170,6 +167,10 @@ while running:
     for box in hurtboxes_active:
         pixel = pygame.Rect(box[0][0], box[0][1], 1, 1)
         pygame.draw.rect(screen, "blue", pixel)
+
+    for box in hitboxes_active:
+        pixel = pygame.Rect(box[0], box[1], 1, 1)
+        pygame.draw.rect(screen, "red", pixel)
 
     pygame.display.flip()
 

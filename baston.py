@@ -81,10 +81,10 @@ def create_projectile(hitbox, velocity, direction):
     # combine velocity and direction into one 2D vector
     # append "projectile" to the end of the added hitbox
 
-def use_move(hitboxes: list):
+def use_move(hitboxes: list, player, move:str):
     """
 
-    hitboxes look like: [shape(), frames_active, player, move]
+    hitboxes look like: [shape(), frames_active]
 
     moves look like: [[hitbox1, hitbox2], knockback, knockback angle, hitstun, damage, priority, hitstop?]
 
@@ -96,7 +96,7 @@ def use_move(hitboxes: list):
     for hitbox in hitboxes:
         if hitbox[0] != "projectile":
             for point in hitbox[0]:
-                hitboxes_active.append([(point[0], point[1]), hitbox[1], hitbox[2], hitbox[3]])
+                hitboxes_active.append([(point[0], point[1]), hitbox[1], player, move])
         elif hitbox[0] == "projectile":
             create_projectile(hitbox[1], hitbox[2], hitbox[3])
 
