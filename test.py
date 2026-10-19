@@ -19,11 +19,16 @@ p2accel = [0, 0]
 stage = (256, 470, 1024, 570)
 jump_buffer1 = 60
 jump_buffer2 = 60
+toggle_buffer = 60
 
 dragon_king1 = create_character([["idle", circle(65, 40, 23)], ["idle", rectangle(45, 30, 40, 80)], ["idle", triangle(65, 85, 35, "down")]])
 dragon_king2 = copy.deepcopy(dragon_king1)
-punchleft = [[[circle(0, 21, 10), 60]], 30, 80, 10, 10, 2] #knockback angle will be smash bros
-punchright = [[[circle(42, 21, 10), 60]], 30, 80, 10, 10, 2]
+punchleft = [circle(460, 410, 10), 30, 80, 10, 10, 2] #knockback angle will be smash bros
+punchright = [circle(42, 21, 10), 30, 80, 10, 10, 2]
+
+hitboxes_active = []
+
+toggle = 0
 
 def resource_path(relative_path):
     try:
@@ -51,9 +56,10 @@ ball = load_and_scale("ball", None, True)
 
 song0 = "default1.wav"
 song1 = "default2.wav"
-playlist = [song0, song1]
+song2 = "default3.wav"
+playlist = [song0, song1, song2]
 pygame.mixer.music.set_endevent(SONG_END)
-song_index = random.randint(0, 1)
+song_index = random.randint(0, 2)
 pygame.mixer.music.load(playlist[song_index])
 pygame.mixer.music.play()
 
@@ -77,15 +83,11 @@ while running:
     elif dragon_king1[2][0] == "aerial":
         jump_buffer1 -= 1
     if keys[pygame.K_a]:
-        p1accel[0] -= 15
+        p1accel[0] -= 12
     if keys[pygame.K_s]:
         pass
     if keys[pygame.K_d]:
-        p1accel[0] += 15
-    if keys[pygame.K_q]:
-        use_move(punchleft[0], 1, "punchleft")
-    if keys[pygame.K_e]:
-        pass
+        p1accel[0] += 12
     if keys[pygame.K_i] and dragon_king2[2][0] == "aerial" and jump_buffer2 < 0:
         p2accel[1] = -60
         dragon_king2[2] = ("helpless", 0)
@@ -96,15 +98,16 @@ while running:
     elif dragon_king2[2][0] == "aerial":
         jump_buffer2 -= 1
     if keys[pygame.K_j]:
-        p2accel[0] -= 15
+        p2accel[0] -= 12
     if keys[pygame.K_k]:
         pass
     if keys[pygame.K_l]:
-        p2accel[0] += 15
-    if keys[pygame.K_u]:
-        pass
-    if keys[pygame.K_o]:
-        pass
+        p2accel[0] += 12
+    if keys[pygame.K_SPACE] and toggle_buffer == 0:
+        toggle = (toggle+1)%2
+        toggle_buffer = 60
+    elif toggle_buffer > 0:
+        toggle_buffer -= 1
 
     p1coords = [p1coords[0] + p1accel[0], p1coords[1] + p1accel[1]]
     if p1accel[0] > 0:
@@ -130,10 +133,8 @@ while running:
     p2accel[0] = min(p2accel[0], 40)
     p2accel[0] = max(p2accel[0], -40)
 
-    p1accel[1] += 6
-    p2accel[1] += 6
-
-    hitboxes_active = []
+    p1accel[1] += 3
+    p2accel[1] += 3
 
     hurtboxes_active = []
     hurtboxes_active.extend(apply_hurtboxes(dragon_king1[0]["idle"], p1coords, 1))
@@ -166,11 +167,13 @@ while running:
 
     for box in hurtboxes_active:
         pixel = pygame.Rect(box[0][0], box[0][1], 1, 1)
-        pygame.draw.rect(screen, "blue", pixel)
+        if toggle == 1:
+            pygame.draw.rect(screen, "blue", pixel)
 
-    for box in hitboxes_active:
-        pixel = pygame.Rect(box[0], box[1], 1, 1)
-        pygame.draw.rect(screen, "red", pixel)
+    hitboxes_to_remove = []
+
+    for hitbox in hitboxes_to_remove:
+        hitboxes_active.remove(hitbox)
 
     pygame.display.flip()
 
