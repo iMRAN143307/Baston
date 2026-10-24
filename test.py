@@ -11,6 +11,9 @@ pygame.init()
 screen = pygame.display.set_mode((1280, 720))
 running = True
 
+clock = pygame.time.Clock()
+dt = 1
+
 starting_lives = 3
 p1coords = [360, 350]
 p2coords = [820, 350]
@@ -109,7 +112,7 @@ while running:
     elif toggle_buffer > 0:
         toggle_buffer -= 1
 
-    p1coords = [p1coords[0] + p1accel[0], p1coords[1] + p1accel[1]]
+    p1coords = [p1coords[0] + p1accel[0] * dt * 30, p1coords[1] + p1accel[1] * dt * 30]
     if p1accel[0] > 0:
         p1accel[0] -= max(abs(p1accel[0]//2), 1)
     elif p1accel[0] < 0:
@@ -121,7 +124,7 @@ while running:
     p1accel[0] = min(p1accel[0], 40)
     p1accel[0] = max(p1accel[0], -40)
 
-    p2coords = [p2coords[0] + p2accel[0], p2coords[1] + p2accel[1]]
+    p2coords = [p2coords[0] + p2accel[0] * dt * 30, p2coords[1] + p2accel[1] * dt * 30]
     if p2accel[0] > 0:
         p2accel[0] -= max(abs(p2accel[0]//2), 1)
     elif p2accel[0] < 0:
@@ -174,6 +177,8 @@ while running:
 
     for hitbox in hitboxes_to_remove:
         hitboxes_active.remove(hitbox)
+
+    dt = clock.tick(60) / 1000
 
     pygame.display.flip()
 
