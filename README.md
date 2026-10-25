@@ -8,4 +8,6 @@ You can install it from the Python Package Index or straight from your CLI with 
 
 Baston requires Pygame in order to work, and once you have imported both of them, you can run functions straight from Baston
 
+Check baston.py for a full list of functions
+
 You can try a demo at https://imran143307.itch.io/baston-demo
