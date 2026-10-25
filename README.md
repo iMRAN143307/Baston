@@ -11,3 +11,5 @@ Baston requires Pygame in order to work, and once you have imported both of them
 Check baston.py for a full list of functions
 
 You can try a demo at https://imran143307.itch.io/baston-demo
+
+Or watch a short trailer I put together at https://drive.google.com/file/d/1Og21mIA3JI1ZnTF2rQFSy4KvmUuk0C5Z/view?t=8.561
