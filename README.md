@@ -7,3 +7,5 @@ A better way to develop fighting games in Pygame! Inspired by Castagne
 You can install it from the Python Package Index or straight from your CLI with pip
 
 Baston requires Pygame in order to work, and once you have imported both of them, you can run functions straight from Baston
+
+You can try a demo at https://imran143307.itch.io/baston-demo
