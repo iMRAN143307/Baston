@@ -23,6 +23,8 @@ stage = (256, 470, 1024, 570)
 jump_buffer1 = 60
 jump_buffer2 = 60
 toggle_buffer = 60
+p1hit = 0
+p2hit = 0
 
 dragon_king1 = create_character([["idle", circle(65, 40, 23)], ["idle", rectangle(45, 30, 40, 80)], ["idle", triangle(65, 85, 35, "down")]])
 dragon_king2 = copy.deepcopy(dragon_king1)
@@ -87,10 +89,12 @@ while running:
         jump_buffer1 -= 1
     if keys[pygame.K_a]:
         p1accel[0] -= 12
-    if keys[pygame.K_s]:
-        pass
     if keys[pygame.K_d]:
         p1accel[0] += 12
+    if keys[pygame.K_q] or keys[pygame.K_e]:
+        for point in hurtboxes_active:
+            if point[2] == 2 and point[0][0] >= p1coords[0] and point[0][0] <= p1coords[0] + 50 and point[0][1] >= p1coords[1] and point[0][1] <= p1coords[1] + 100:
+                p2hit = 10
     if keys[pygame.K_i] and dragon_king2[2][0] == "aerial" and jump_buffer2 < 0:
         p2accel[1] = -60
         dragon_king2[2] = ("helpless", 0)
@@ -102,10 +106,12 @@ while running:
         jump_buffer2 -= 1
     if keys[pygame.K_j]:
         p2accel[0] -= 12
-    if keys[pygame.K_k]:
-        pass
     if keys[pygame.K_l]:
         p2accel[0] += 12
+    if keys[pygame.K_o] or keys[pygame.K_u]:
+        for point in hurtboxes_active:
+            if point[2] == 1 and point[0][0] >= p2coords[0] and point[0][0] <= p2coords[0] + 50 and point[0][1] >= p2coords[1] and point[0][1] <= p2coords[1] + 100:
+                p1hit = 10
     if keys[pygame.K_SPACE] and toggle_buffer == 0:
         toggle = (toggle+1)%2
         toggle_buffer = 60
@@ -168,15 +174,17 @@ while running:
     screen.blit(dragon_king_left, p1coords)
     screen.blit(dragon_king_right, p2coords)
 
-    for box in hurtboxes_active:
-        pixel = pygame.Rect(box[0][0], box[0][1], 1, 1)
-        if toggle == 1:
-            pygame.draw.rect(screen, "blue", pixel)
 
-    hitboxes_to_remove = []
+    if toggle == 1:
+        for box in hurtboxes_active:
+            pixel = pygame.Rect(box[0][0], box[0][1], 1, 1)
+            if (box[2] == 2 and p2hit >= 0) or (box[2] == 1 and p1hit >= 0):
+                pygame.draw.rect(screen, "red", pixel)
+            else:
+                pygame.draw.rect(screen, "blue", pixel)
 
-    for hitbox in hitboxes_to_remove:
-        hitboxes_active.remove(hitbox)
+    p2hit -= 1
+    p1hit -= 1
 
     dt = clock.tick(60) / 1000
 
